@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package myservices;
+
+option go_package = "https://github.com/myservicespb";
+import "google/api/annotations.proto";
+
+// Common message types
+message Empty {}
+message StatusResponse {
+  string message = 1;
+}
+
+// 1. AuthService
+service AuthService {
+  rpc Login (LoginRequest) returns (AuthResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+  }
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  string token = 1;
+}
+
+// 2. UserService
+service UserService {
+  rpc GetUser (UserRequest) returns (UserResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}"
+    };
+  }
+}
+
+message UserRequest {
+  string user_id = 1;
+}
+
+message UserResponse {
+  string name = 1;
+  string email = 2;
+}
+
+// 3. ProductService
+service ProductService {
+  rpc ListProducts (Empty) returns (ProductListResponse) {
+    option (google.api.http) = {
+      get: "/v1/products"
+    };
+  }
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  double price = 3;
+}
+
+message ProductListResponse {
+  repeated Product products = 1;
+}
+
+// 4. OrderService
+service OrderService {
+  rpc PlaceOrder (OrderRequest) returns (OrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/orders"
+      body: "*"
+    };
+  }
+}
+
+message OrderRequest {
+  string user_id = 1;
+  repeated string product_ids = 2;
+}
+
+message OrderResponse {
+  string order_id = 1;
+  string status = 2;
+}
+
+// 5. NotificationService
+service NotificationService {
+  rpc SendNotification (NotificationRequest) returns (StatusResponse) {
+    option (google.api.http) = {
+      post: "/v1/notifications"
+      body: "*"
+    };
+  }
+}
+
+message NotificationRequest {
+  string user_id = 1;
+  string message = 2;
+}

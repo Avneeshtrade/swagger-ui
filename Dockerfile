@@ -16,8 +16,9 @@ ENV GOPROXY=direct
 RUN go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
 WORKDIR /app
 RUN git clone https://github.com/grpc-ecosystem/grpc-gateway.git
+RUN git clone https://github.com/googleapis/googleapis.git
 COPY . .
-RUN protoc -I ./Protos -I grpc-gateway --openapiv2_out ./template --openapiv2_opt logtostderr=true,allow_merge=true,merge_file_name=commitment commitment.proto
+RUN protoc -I ./Protos -I grpc-gateway -I googleapis --openapiv2_out ./template --openapiv2_opt logtostderr=true,allow_merge=true,merge_file_name=commitment commitment.proto
 
 
 # Stage 2: Convert OpenAPI v2 to v3 using Node.js
